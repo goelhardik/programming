@@ -9,16 +9,18 @@ class Solution(object):
         ones = 0
         ten = 10
         while (1):
-            qty = (n % ten - (ten // 10 - 1))
+            index = n // ten    # multiple of current digit (ones/tens/hundreds/...). eg. 5 for n = 56 for tens digit
+            mult = ten // 10
+            qty = (n % ten - (mult - 1))    # count number of ones in 123 for n = 5123
             if (qty <= 0):
                 ans = 0
-            elif (qty > ten // 10):
-                ans = ten // 10
+            elif (qty > mult):
+                ans = mult
             else:
                 ans = qty
                 
-            ones += (n // ten) * (ten // 10) + ans
-            if (n // ten == 0):
+            ones += index * mult + ans
+            if (index == 0):
                 break
             ten *= 10
             
