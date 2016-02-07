@@ -72,6 +72,10 @@ class Bayes():
                 word = word.lower()
                 if (word in common_words):
                     continue
+                if (word in COUNTS):
+                    COUNTS[word] += 1
+                else:
+                    COUNTS[word] = 1
                 self.db[topic].add_word(word)
             self.db[topic].incr_count()
 
@@ -91,12 +95,17 @@ class Bayes():
                 if (word in common_words):
                     continue
                 prob[t] *= self.db[t].get_word_given_topic(word)   
+                if (word in COUNTS):
+                    prob[t] /= COUNTS[word] / TOTAL_WORDS
+                else:
+                    prob[t] /= 1 / TOTAL_WORDS
 
         final_list = [str(i[0]) for i in sorted(enumerate(prob), key=lambda 
                                                 x:x[1], reverse=True)]
         return (' '.join(final_list[0 : 10]) + '\n')
 
 
+COUNTS = {}
 # I/O code
 bayes = Bayes()
 reg = '[\'\",.(\'\.)!@#$%\?\-\+:;0-9\/\(\[\{\)\]\}]'
@@ -108,7 +117,7 @@ for line in common_eng.readlines():
 print(common_words)
 file = open('labeler_sample.in', 'r')
 t, e = map(int, file.readline().split())
-TOTAL_WORDS = t * 0.3
+TOTAL_WORDS = t * 8
 for test in range(t):
     topics = list(map(int, file.readline().split()))
     del topics[0]
